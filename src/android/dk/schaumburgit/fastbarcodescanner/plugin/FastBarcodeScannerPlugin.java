@@ -245,19 +245,6 @@ public class FastBarcodeScannerPlugin
         }
     }
 
-    /**
-     * Utility method to add some properties to a {@link JSONObject}
-     * @param obj the json object where to add the new property
-     * @param key property key
-     * @param value value of the property
-     */
-    private void addProperty(JSONObject obj, String key, Object value) {
-        try {
-            obj.put(key, value);
-        }
-        catch (JSONException e){}
-    }
-
     @Override
     public void onError(Exception error){
         if( mScanCallback != null ) {
