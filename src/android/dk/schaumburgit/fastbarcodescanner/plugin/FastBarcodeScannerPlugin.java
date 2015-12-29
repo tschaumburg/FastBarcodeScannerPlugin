@@ -220,7 +220,10 @@ public class FastBarcodeScannerPlugin
 
         if (mScanCallback != null) {
             Log.d(TAG, "Callback");
-            PluginResult result = new PluginResult(PluginResult.Status.OK, barcode);
+            JSONObject returnObj = new JSONObject();
+            addProperty(returnObj, "barcode", barcode);
+            addProperty(returnObj, "format", format);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
             result.setKeepCallback(true);
             mScanCallback.sendPluginResult(result);
         }
@@ -233,10 +236,26 @@ public class FastBarcodeScannerPlugin
             barcode = barcodes[0].barcode;
 
         if( mScanCallback != null ) {
-            PluginResult result = new PluginResult(PluginResult.Status.OK, barcode);
+            JSONObject returnObj = new JSONObject();
+            addProperty(returnObj, "barcodes", barcodes);
+            addProperty(returnObj, "format", format);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
             result.setKeepCallback(true);
             mScanCallback.sendPluginResult(result);
         }
+    }
+
+    /**
+     * Utility method to add some properties to a {@link JSONObject}
+     * @param obj the json object where to add the new property
+     * @param key property key
+     * @param value value of the property
+     */
+    private void addProperty(JSONObject obj, String key, Object value) {
+        try {
+            obj.put(key, value);
+        }
+        catch (JSONException e){}
     }
 
     @Override
