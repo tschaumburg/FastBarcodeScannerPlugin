@@ -181,7 +181,13 @@ public class FastBarcodeScannerPlugin
             return;
         }
 
-        mScanner.StopScan();
+        try {
+            mScanner.StopScan();
+        } catch (Exception e) {
+            e.printStackTrace();
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
+            callbackContext.sendPluginResult(pluginResult);
+        }
 
         if (mScanCallback != null) {
             PluginResult result = new PluginResult(PluginResult.Status.ERROR, "stopScanning called");
@@ -203,6 +209,8 @@ public class FastBarcodeScannerPlugin
             }
         } catch (Exception e) {
             e.printStackTrace();
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
+            callbackContext.sendPluginResult(pluginResult);
         }
 
         callbackContext.sendPluginResult(
