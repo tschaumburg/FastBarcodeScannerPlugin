@@ -110,7 +110,7 @@ public class FastBarcodeScannerPlugin
     private Handler mScanCallbackHandler;
     private int mRequestedResolution;
     private void retryStartScanning(final CallbackContext callbackContext) {
-    	startScanning(mRequestedResolution, callbackContext)
+    	startScanning(mRequestedResolution, callbackContext);
     }
     
     private void startScanning(int resolution, final CallbackContext callbackContext) {
