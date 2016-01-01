@@ -78,7 +78,9 @@ public class FastBarcodeScannerPlugin
         }
 	// start scanning
 	else if (ACTION_START_SCANNING.equals(action)) {
-		int resolution = arg_object.optInt("resolution", 1024*768);
+		int resolution = 1024*768;
+		if (arg_object != null)
+			resolution = arg_object.optInt("resolution", 1024*768);
 		startScanning(resolution, callbackContext);
 		return true;
 	}
