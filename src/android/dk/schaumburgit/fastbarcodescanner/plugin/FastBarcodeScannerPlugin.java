@@ -76,14 +76,15 @@ public class FastBarcodeScannerPlugin
             showToast(data);
             return true;
         }
-		// start scanning
-		else if (ACTION_START_SCANNING.equals(action)) {
-			startScanning(callbackContext);
-			return true;
-		}
-		// stop scanning
-		else if (ACTION_STOP_SCANNING.equals(action)) {
-            stopScanning(callbackContext);
+	// start scanning
+	else if (ACTION_START_SCANNING.equals(action)) {
+		int resolution = arg_object.optInt("resolution", 1024*768);
+		startScanning(resolution, callbackContext);
+		return true;
+	}
+	// stop scanning
+	else if (ACTION_STOP_SCANNING.equals(action)) {
+        	stopScanning(callbackContext);
 			return true;
 		}
 		// the action doesn't exist
@@ -107,7 +108,7 @@ public class FastBarcodeScannerPlugin
     private CallbackContext mScanCallback;
     private HandlerThread mScanCallbackThread;
     private Handler mScanCallbackHandler;
-    private void startScanning(final CallbackContext callbackContext) {
+    private void startScanning(int resolution, final CallbackContext callbackContext) {
         Log.d(TAG, "Start scanning");
 
         if (mScanner == null) {
@@ -117,7 +118,7 @@ public class FastBarcodeScannerPlugin
                 return;
             }
 
-            mScanner = new FastBarcodeScanner(cordova.getActivity(), 4*1024 * 768);
+            mScanner = new FastBarcodeScanner(cordova.getActivity(), resolution);
         }
 
         mScanCallback = callbackContext;
