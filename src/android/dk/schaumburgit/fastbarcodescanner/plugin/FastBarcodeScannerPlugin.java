@@ -117,7 +117,7 @@ public class FastBarcodeScannerPlugin
                 return;
             }
 
-            mScanner = new FastBarcodeScanner(cordova.getActivity(), 1024 * 768);
+            mScanner = new FastBarcodeScanner(cordova.getActivity(), 4*1024 * 768);
         }
 
         mScanCallback = callbackContext;
