@@ -108,8 +108,14 @@ public class FastBarcodeScannerPlugin
     private CallbackContext mScanCallback;
     private HandlerThread mScanCallbackThread;
     private Handler mScanCallbackHandler;
+    private int mRequestedResolution;
+    private void retryStartScanning(final CallbackContext callbackContext) {
+    	startScanning(mRequestedResolution, callbackContext)
+    }
+    
     private void startScanning(int resolution, final CallbackContext callbackContext) {
         Log.d(TAG, "Start scanning");
+        mRequestedResolution = resolution;
 
         if (mScanner == null) {
             boolean hasCameraPermission = requestCameraPermission(CALL_START_WHEN_DONE, callbackContext);
@@ -377,7 +383,7 @@ public class FastBarcodeScannerPlugin
         mPermissionCallbackContext = null; // if there's a race-condition, let's make life hard for it...
         switch (whatNext) {
             case CALL_START_WHEN_DONE:
-                startScanning(ctx);
+                retryStartScanning(ctx);
                 break;
             default:
                 Log.e(TAG, "Unexpected requestCode - got a permission result we didnt ask for...???");
