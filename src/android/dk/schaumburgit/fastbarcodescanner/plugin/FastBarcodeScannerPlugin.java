@@ -130,6 +130,7 @@ public class FastBarcodeScannerPlugin
         }
 
         mScanCallback = callbackContext;
+        cordova.getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         cordova.getThreadPool().execute(new Runnable() {
             //cordova.getActivity().runOnUiThread(new Runnable() {
@@ -183,6 +184,8 @@ public class FastBarcodeScannerPlugin
 
     private void stopScanning(final CallbackContext callbackContext) {
         Log.v(TAG, "Stop scanning");
+
+        cordova.getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mScanCallback = null;
 
