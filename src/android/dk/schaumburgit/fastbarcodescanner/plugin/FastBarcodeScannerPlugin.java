@@ -13,6 +13,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.provider.Settings;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
