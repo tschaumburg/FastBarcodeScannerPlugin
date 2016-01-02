@@ -157,7 +157,7 @@ public class FastBarcodeScannerPlugin
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, returnObj);
                     pluginResult.setKeepCallback(true); // make sure the callback is kept open
                     // Return:
-                    callbackContext.sendPluginResult(pluginResult);
+                    //callbackContext.sendPluginResult(pluginResult);
                 } catch (Exception exc) {
                     Log.e(TAG, "StartScan failed", exc);
                     // Create an ERROR result:
