@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-fast-barcode-scanner"
-    version="1.0.6"
+    version="1.0.7"
 >
     <name>Fast Barcode Scanner</name>
     <description>Cordova Plugin for fast, continuous scanning of barcodes.</description>
