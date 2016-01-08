@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-fast-barcode-scanner",
-  "version": "1.0.10",
+  "version": "1.1.01",
   "description": "Cordova Plugin for fast, continuous scanning of barcodes",
   "cordova": {
     "id": "cordova-plugin-fast-barcode-scanner",
