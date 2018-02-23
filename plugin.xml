@@ -35,9 +35,9 @@
 	      </config-file>
         <source-file src="src/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
         <framework src="com.google.zxing:core:3.2.1"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:1.0.7"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:1.0.7"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:1.0.7"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha1"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha1"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:2.0.0.alpha1"/>
     </platform>
 
 </plugin>

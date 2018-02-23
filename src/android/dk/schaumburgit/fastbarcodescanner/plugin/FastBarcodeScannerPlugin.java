@@ -14,6 +14,9 @@ import android.util.Log;
 import android.provider.Settings;
 import android.widget.Toast;
 import android.view.WindowManager;
+import android.view.TextureView;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,12 +24,13 @@ import org.json.JSONObject;
 
 import java.lang.Override;
 
-import dk.schaumburgit.fastbarcodescanner.FastBarcodeScanner;
+import dk.schaumburgit.fastbarcodescanner.IBarcodeScanner;
+import dk.schaumburgit.fastbarcodescanner.BarcodeScannerFactory;
 import dk.schaumburgit.stillsequencecamera.camera2.StillSequenceCamera2;
 
 public class FastBarcodeScannerPlugin
         extends CordovaPlugin
-        implements FastBarcodeScanner.BarcodeDetectedListener, FastBarcodeScanner.MultipleBarcodesDetectedListener
+        implements IBarcodeScanner.BarcodeDetectedListener, IBarcodeScanner.MultipleBarcodesDetectedListener
 {
 
 	public static final String TAG = "Fast Barcode Scanner Plugin";
@@ -34,10 +38,9 @@ public class FastBarcodeScannerPlugin
     private static final String ACTION_SHOW_TOAST = "showToast";
 	private static final String ACTION_START_SCANNING = "startScanning";
 	private static final String ACTION_STOP_SCANNING = "stopScanning";
-    //private static final String ACTION_REQUEST_PERMISSION = "requestPermission";
-	//private static final String ACTION_WRITE_HEX = "writeSerialHex";
-	//private static final String ACTION_CLOSE = "closeSerial";
-	//private static final String ACTION_READ_CALLBACK = "registerReadCallback";
+	private static final String ACTION_SHOW_PREVIEW = "showPreview";
+	private static final String ACTION_HIDE_PREVIEW = "hidePreview";
+	
 
 	/**
 	 * Constructor.
@@ -77,16 +80,26 @@ public class FastBarcodeScannerPlugin
             showToast(data);
             return true;
         }
-	// start scanning
-	else if (ACTION_START_SCANNING.equals(action)) {
-		int resolution = 1024*768;
-		if (arg_object != null)
-			resolution = arg_object.optInt("resolution", 1024*768);
-		startScanning(resolution, callbackContext);
-		return true;
-	}
-	// stop scanning
-	else if (ACTION_STOP_SCANNING.equals(action)) {
+		// start scanning
+		else if (ACTION_START_SCANNING.equals(action)) {
+			int resolution = 1024*768;
+			if (arg_object != null)
+				resolution = arg_object.optInt("resolution", 1024*768);
+			startScanning(resolution, callbackContext);
+			return true;
+		}
+		// show preview
+		else if (ACTION_SHOW_PREVIEW.equals(action)) {
+			showPreview(callbackContext);
+			return true;
+		}
+		// hide preview
+		else if (ACTION_HIDE_PREVIEW.equals(action)) {
+			hidePreview(callbackContext);
+			return true;
+		}
+		// stop scanning
+		else if (ACTION_STOP_SCANNING.equals(action)) {
         	stopScanning(callbackContext);
 			return true;
 		}
@@ -105,7 +118,7 @@ public class FastBarcodeScannerPlugin
         });
     }
 
-    private FastBarcodeScanner mScanner = null;
+    private IBarcodeScanner mScanner = null;
 
     // callback that will be used to send back data to the cordova app
     private CallbackContext mScanCallback;
@@ -127,7 +140,7 @@ public class FastBarcodeScannerPlugin
                 return;
             }
 
-            mScanner = new FastBarcodeScanner(cordova.getActivity(), resolution);
+            mScanner = BarcodeScannerFactory.Create(cordova.getActivity(), (android.view.TextureView)null, resolution);
         }
 
         mScanCallback = callbackContext;
@@ -188,6 +201,45 @@ public class FastBarcodeScannerPlugin
         });
     }
 
+	private boolean mPreviewInitialized = false;
+	private TextureView mPreview = null;
+	private void initPreview() {
+		if (mPreviewInitialized)
+			return;
+
+		Log.v(TAG, "Init preview");
+
+		mPreview = new TextureView(cordova.getActivity());
+        FrameLayout.LayoutParams cameraPreviewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        ((ViewGroup) webView.getView().getParent()).addView(mPreview, cameraPreviewParams);
+
+        webView.getView().bringToFront();
+
+		mPreviewInitialized = true;
+	}
+
+	private void showPreview(final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+				if (!mPreviewInitialized)
+					initPreview();
+
+				Log.v(TAG, "Show preview");
+            }
+        });
+	}
+
+	private void hidePreview(final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+				if (!mPreviewInitialized)
+					return;
+
+				Log.v(TAG, "Hide preview");
+            }
+        });
+	}
+
     private void stopScanning(final CallbackContext callbackContext) {
         Log.v(TAG, "Stop scanning");
 
@@ -241,7 +293,7 @@ public class FastBarcodeScannerPlugin
     }
 
     @Override
-    public void onSingleBarcodeAvailable(FastBarcodeScanner.BarcodeInfo barcodeInfo, byte[] image, int format, int width, int height) {
+    public void onSingleBarcodeAvailable(IBarcodeScanner.BarcodeInfo barcodeInfo, byte[] image, int format, int width, int height) {
         Log.d(TAG, "Start barcode");
         String barcode = null;
         if (barcodeInfo != null)
@@ -260,7 +312,7 @@ public class FastBarcodeScannerPlugin
     }
 
     @Override
-    public void onMultipleBarcodeAvailable(FastBarcodeScanner.BarcodeInfo[] barcodes, byte[] image, int format, int width, int height){
+    public void onMultipleBarcodeAvailable(IBarcodeScanner.BarcodeInfo[] barcodes, byte[] image, int format, int width, int height){
         String barcode = null;
         if (barcodes != null && barcodes.length > 0)
             barcode = barcodes[0].barcode;
@@ -306,7 +358,8 @@ public class FastBarcodeScannerPlugin
      * @see org.apache.cordova.CordovaPlugin#onResume(boolean)
      */
     @Override
-    public void onResume(boolean multitasking) {
+    public void onResume(boolean multitasking) 
+	{
         Log.d(TAG, "Resume");
 
         if (mScanner == null) {
