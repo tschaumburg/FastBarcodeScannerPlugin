@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-fast-barcode-scanner"
-    version="1.1.01"
+    version="2.0.0.alpha5"
 >
     <name>Fast Barcode Scanner</name>
     <description>Cordova Plugin for fast, continuous scanning of barcodes.</description>
@@ -35,9 +35,9 @@
 	      </config-file>
         <source-file src="src/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
         <framework src="com.google.zxing:core:3.2.1"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha1"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha1"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:2.0.0.alpha1"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha5"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha5"/>
+        <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:2.0.0.alpha5"/>
     </platform>
 
 </plugin>

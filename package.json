@@ -1,46 +1,46 @@
 {
-  "name": "cordova-plugin-fast-barcode-scanner",
-  "version": "1.1.01",
-  "description": "Cordova Plugin for fast, continuous scanning of barcodes",
-  "cordova": {
-    "id": "cordova-plugin-fast-barcode-scanner",
-    "platforms": [
-      "android"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tschaumburg/FastBarcodeScannerPlugin.git"
-  },
-  "keywords": [
-    "cordova",
-    "barcode",
-    "ecosystem:cordova",
-    "cordova-android",
-    "zxing"
-  ],
-  "author": {
-    "name": "Thomas Schaumburg"
-  },
-  "license": "Apache 2.0",
-  "bugs": {
-    "url": "https://github.com/tschaumburg/FastBarcodeScannerPlugin/issues"
-  },
-  "homepage": "https://github.com/tschaumburg/FastBarcodeScannerPlugin#readme",
-  "_id": "cordova-plugin-fast-barcode-scanner@1.0.0",
-  "_from": "cordova-plugin-device@*",
-  "scripts": {},
-  "_npmVersion": "3.3.12",
-  "_nodeVersion": "5.0.0",
-  "_npmUser": {
-    "name": "tschaumburg",
-    "email": "thomas@schaumburg-it.dk"
-  },
-  "maintainers": [
-    {
-      "name": "tschaumburg",
-      "email": "thomas@schaumburg-it.dk"
-    }
-  ],
-  "directories": {}
+    "name": "cordova-plugin-fast-barcode-scanner",
+    "version": "2.0.0.alpha5",
+    "description": "Cordova Plugin for fast, continuous scanning of barcodes",
+    "cordova": {
+        "id": "cordova-plugin-fast-barcode-scanner",
+        "platforms": [
+            "android"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tschaumburg/FastBarcodeScannerPlugin.git"
+    },
+    "keywords": [
+        "cordova",
+        "barcode",
+        "ecosystem:cordova",
+        "cordova-android",
+        "zxing"
+    ],
+    "author": {
+        "name": "Thomas Schaumburg"
+    },
+    "license": "Apache 2.0",
+    "bugs": {
+        "url": "https://github.com/tschaumburg/FastBarcodeScannerPlugin/issues"
+    },
+    "homepage": "https://github.com/tschaumburg/FastBarcodeScannerPlugin#readme",
+    "_id": "cordova-plugin-fast-barcode-scanner@2.0.0.alpha5",
+    "_from": "cordova-plugin-device@*",
+    "scripts": {},
+    "_npmVersion": "3.3.12",
+    "_nodeVersion": "5.0.0",
+    "_npmUser": {
+        "name": "tschaumburg",
+        "email": "thomas@schaumburg-it.dk"
+    },
+    "maintainers": [
+        {
+            "name": "tschaumburg",
+            "email": "thomas@schaumburg-it.dk"
+        }
+    ],
+    "directories": {}
 }

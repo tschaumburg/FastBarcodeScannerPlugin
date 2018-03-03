@@ -13,10 +13,16 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.provider.Settings;
 import android.widget.Toast;
+import android.widget.RelativeLayout;
 import android.view.WindowManager;
 import android.view.TextureView;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.media.Image;
+import android.graphics.ImageFormat;
+import android.graphics.Color;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +33,8 @@ import java.lang.Override;
 import dk.schaumburgit.fastbarcodescanner.IBarcodeScanner;
 import dk.schaumburgit.fastbarcodescanner.BarcodeScannerFactory;
 import dk.schaumburgit.stillsequencecamera.camera2.StillSequenceCamera2;
+import dk.schaumburgit.fastbarcodescanner.imageutils.ImageDecoder;
+import dk.schaumburgit.fastbarcodescanner.EventConflation;
 
 public class FastBarcodeScannerPlugin
         extends CordovaPlugin
@@ -59,6 +67,7 @@ public class FastBarcodeScannerPlugin
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         Log.d(TAG, "initialize");
+		initPreview();
     }
 
 	/**
@@ -90,7 +99,11 @@ public class FastBarcodeScannerPlugin
 		}
 		// show preview
 		else if (ACTION_SHOW_PREVIEW.equals(action)) {
-			showPreview(callbackContext);
+            int x = arg_object.getInt("x"); // ...or optInt()?
+            int y = arg_object.getInt("y"); // ...or optInt()?
+            int w = arg_object.getInt("w"); // ...or optInt()?
+            int h = arg_object.getInt("h"); // ...or optInt()?
+			showPreview(x, y, w, h, callbackContext);
 			return true;
 		}
 		// hide preview
@@ -133,6 +146,8 @@ public class FastBarcodeScannerPlugin
         Log.d(TAG, "Start scanning");
         mRequestedResolution = resolution;
 
+		//showPreview(0, 0, 1024, 1024, callbackContext);
+
         if (mScanner == null) {
             boolean hasCameraPermission = requestCameraPermission(CALL_START_WHEN_DONE, callbackContext);
             if (!hasCameraPermission) {
@@ -140,7 +155,17 @@ public class FastBarcodeScannerPlugin
                 return;
             }
 
-            mScanner = BarcodeScannerFactory.Create(cordova.getActivity(), (android.view.TextureView)null, resolution);
+            //mScanner = BarcodeScannerFactory.Create(cordova.getActivity(), (android.view.TextureView)null, resolution);
+            mScanner = 
+				BarcodeScannerFactory
+				.builder(mPreview)
+				.resolution(resolution)
+                .conflateHits(EventConflation.Changes)
+                .debounceBlanks(10)
+                .conflateBlanks(EventConflation.First)
+                .debounceErrors(3)
+                .conflateErrors(EventConflation.First)
+				.build(cordova.getActivity());
         }
 
         mScanCallback = callbackContext;
@@ -163,7 +188,7 @@ public class FastBarcodeScannerPlugin
                 mScanCallbackHandler = new Handler(mScanCallbackThread.getLooper());
                 // Start listening for callbacks
                 try {
-                    mScanner.StartScan(false, FastBarcodeScannerPlugin.this, mScanCallbackHandler);
+                    mScanner.StartScan(FastBarcodeScannerPlugin.this, mScanCallbackHandler);
                     // Create an OK result:
                     JSONObject returnObj = new JSONObject();
                     addProperty(returnObj, "startScanning", "true");
@@ -199,6 +224,7 @@ public class FastBarcodeScannerPlugin
                 }
             }
         });
+
     }
 
 	private boolean mPreviewInitialized = false;
@@ -209,33 +235,68 @@ public class FastBarcodeScannerPlugin
 
 		Log.v(TAG, "Init preview");
 
-		mPreview = new TextureView(cordova.getActivity());
-        FrameLayout.LayoutParams cameraPreviewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        ((ViewGroup) webView.getView().getParent()).addView(mPreview, cameraPreviewParams);
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+				mPreview = new TextureView(cordova.getActivity());
+				FrameLayout.LayoutParams cameraPreviewParams = _position(0, 66, 412, 297);
+					//new FrameLayout.LayoutParams(
+					//	412,// w
+					//	1024,//297,// h
+					//	Gravity.LEFT | Gravity.TOP
+					//);
+				//cameraPreviewParams.leftMargin = 0;// x;
+			    //cameraPreviewParams.topMargin = 66;// y;
 
-        webView.getView().bringToFront();
+				((ViewGroup) webView.getView().getParent()).addView(mPreview, cameraPreviewParams);
 
-		mPreviewInitialized = true;
+				webView.getView().bringToFront();
+				//mPreview.setVisibility(View.INVISIBLE);
+				
+				//mPreview.setVisibility(View.VISIBLE);
+                //webView.getView().setBackgroundColor(Color.argb(1, 0, 0, 0));
+
+				mPreviewInitialized = true;
+            }
+        });
+
+		//showPreview(0, 0, 1024, 1024, null);
 	}
 
-	private void showPreview(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-				if (!mPreviewInitialized)
-					initPreview();
+	private FrameLayout.LayoutParams _position(int x, int y, int w, int h)
+	{
+		Log.v(TAG, "POSITION (" + x + ", " + y + ", " + w + ", " + h + ")");
 
-				Log.v(TAG, "Show preview");
+		FrameLayout.LayoutParams res = 
+			new FrameLayout.LayoutParams(
+				w,
+				h,
+				Gravity.LEFT | Gravity.TOP
+			);
+		
+		res.leftMargin = x;
+		res.topMargin = y;
+
+		return res;
+	}
+
+	private void showPreview(final int x, final int y, final int w, final int h, final CallbackContext callbackContext) {
+		Log.v(TAG, "showPreview(" + x + ", " + y + ", " + w + ", " + h + ")");
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+				//mPreview.setVisibility(View.VISIBLE);
+		        mPreview.setLayoutParams(_position(x, y, w, h));
+                webView.getView().setBackgroundColor(Color.argb(1, 0, 0, 0));
             }
         });
 	}
 
 	private void hidePreview(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-				if (!mPreviewInitialized)
-					return;
+		Log.v(TAG, "Hide preview");
 
-				Log.v(TAG, "Hide preview");
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                webView.getView().setBackgroundColor(Color.WHITE);
+				mPreview.setVisibility(View.INVISIBLE);
             }
         });
 	}
@@ -293,18 +354,11 @@ public class FastBarcodeScannerPlugin
     }
 
     @Override
-    public void onSingleBarcodeAvailable(IBarcodeScanner.BarcodeInfo barcodeInfo, byte[] image, int format, int width, int height) {
-        Log.d(TAG, "Start barcode");
-        String barcode = null;
-        if (barcodeInfo != null)
-            barcode = barcodeInfo.barcode;
-        Log.d(TAG, "Barcode: " + barcode);
-
+    public void OnBlank() {
         if (mScanCallback != null) {
-            Log.d(TAG, "Callback");
+            Log.d(TAG, "Blank");
             JSONObject returnObj = new JSONObject();
-            addProperty(returnObj, "barcode", barcode);
-            addProperty(returnObj, "format", format);
+            addProperty(returnObj, "barcode", null);
             PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
             result.setKeepCallback(true);
             mScanCallback.sendPluginResult(result);
@@ -312,15 +366,42 @@ public class FastBarcodeScannerPlugin
     }
 
     @Override
-    public void onMultipleBarcodeAvailable(IBarcodeScanner.BarcodeInfo[] barcodes, byte[] image, int format, int width, int height){
+    public void OnHit(IBarcodeScanner.BarcodeInfo barcodeInfo, Image source) {
+        //Log.d(TAG, "Start barcode");
+
         String barcode = null;
-        if (barcodes != null && barcodes.length > 0)
-            barcode = barcodes[0].barcode;
+        if (barcodeInfo != null)
+            barcode = barcodeInfo.barcode;
+
+        Log.d(TAG, "Barcode: " + barcode);
+
+        final byte[] serialized = (source == null) ? null : ImageDecoder.Serialize(source);
+        final int width = (source == null) ? 0 : source.getWidth();
+        final int height = (source == null) ? 0 : source.getHeight();
+        final int format = (source == null) ? ImageFormat.UNKNOWN : source.getFormat();
+
+        if (mScanCallback != null) {
+            //Log.d(TAG, "Callback");
+            JSONObject returnObj = new JSONObject();
+            addProperty(returnObj, "barcode", barcode);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
+            result.setKeepCallback(true);
+            mScanCallback.sendPluginResult(result);
+        }
+    }
+
+    @Override
+    public void OnHits(IBarcodeScanner.BarcodeInfo[] barcodes, Image source) {
+    //public void onMultipleBarcodeAvailable(IBarcodeScanner.BarcodeInfo[] barcodes, byte[] image, int format, int width, int height){
+
+        final byte[] serialized = (source == null) ? null : ImageDecoder.Serialize(source);
+        final int width = (source == null) ? 0 : source.getWidth();
+        final int height = (source == null) ? 0 : source.getHeight();
+        final int format = (source == null) ? ImageFormat.UNKNOWN : source.getFormat();
 
         if( mScanCallback != null ) {
             JSONObject returnObj = new JSONObject();
             addProperty(returnObj, "barcodes", barcodes);
-            addProperty(returnObj, "format", format);
             PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
             result.setKeepCallback(true);
             mScanCallback.sendPluginResult(result);
@@ -328,7 +409,7 @@ public class FastBarcodeScannerPlugin
     }
 
     @Override
-    public void onError(Exception error){
+    public void OnError(Exception error){
         if( mScanCallback != null ) {
             PluginResult result = new PluginResult(PluginResult.Status.ERROR, error.getMessage());
             result.setKeepCallback(true);
