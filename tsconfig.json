@@ -1,0 +1,37 @@
+{
+    "exclude": [
+        "platforms",
+        "node_modules",
+        "bower_components",
+        "plugins",
+        "merges",
+        "res",
+        "bin",
+        "bld",
+        "node_modules",
+        "wwwroot",
+        "creator-export",
+        "./creator-export",
+        "**/creator-export/*",
+        "scripts/creator-export",
+        "scripts/typings"
+    ],
+    "include": [ "./src/client" ],
+
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false, 
+        "sourceMap": true,
+        "target": "es3",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "inlineSources": false,
+        "declaration": true,
+        "sourceRoot": "./src/client",
+        "rootDir": "./src/client",
+        "outDir": "./www",
+        "declarationDir": "./types",
+        "baseUrl": "."
+    }
+}

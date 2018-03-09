@@ -32,9 +32,14 @@ import java.lang.Override;
 
 import dk.schaumburgit.fastbarcodescanner.IBarcodeScanner;
 import dk.schaumburgit.fastbarcodescanner.BarcodeScannerFactory;
+//import dk.schaumburgit.stillsequencecamera.camera2.Facing;
 import dk.schaumburgit.stillsequencecamera.camera2.StillSequenceCamera2;
 import dk.schaumburgit.fastbarcodescanner.imageutils.ImageDecoder;
 import dk.schaumburgit.fastbarcodescanner.EventConflation;
+import dk.schaumburgit.trackingbarcodescanner.ScanOptions;
+import dk.schaumburgit.trackingbarcodescanner.TrackingOptions;
+import dk.schaumburgit.fastbarcodescanner.callbackmanagers.CallBackOptions;
+import dk.schaumburgit.stillsequencecamera.camera2.StillSequenceCamera2Options;
 
 public class FastBarcodeScannerPlugin
         extends CordovaPlugin
@@ -48,6 +53,7 @@ public class FastBarcodeScannerPlugin
 	private static final String ACTION_STOP_SCANNING = "stopScanning";
 	private static final String ACTION_SHOW_PREVIEW = "showPreview";
 	private static final String ACTION_HIDE_PREVIEW = "hidePreview";
+	private static final String ACTION_SIMULATE = "simulate";
 	
 
 	/**
@@ -69,6 +75,77 @@ public class FastBarcodeScannerPlugin
         Log.d(TAG, "initialize");
 		initPreview();
     }
+
+	private StillSequenceCamera2Options convertCameraOptions(JSONObject json) throws JSONException
+	{
+		boolean enablePreview = json.getBoolean("enablePreview");
+		TextureView preview = enablePreview ? mPreview: null;
+		StillSequenceCamera2Options.Facing facing = decodeFacing(json.getInt("facing"));
+		int minPixels = json.getInt("minPixels");
+		StillSequenceCamera2Options res = new StillSequenceCamera2Options(preview, minPixels, facing);
+		return res;
+	}
+
+	private ScanOptions convertScanOptions(JSONObject json) throws JSONException
+	{
+		String emptyMarker = json.getString("emptyMarker");
+		String beginsWith = json.getString("beginsWith");
+		ScanOptions res = new ScanOptions(emptyMarker, beginsWith);
+		return res;
+	}
+
+	private TrackingOptions convertTrackingOptions(JSONObject json) throws JSONException
+	{
+		double margin = json.getDouble("trackingMargin");
+		int patience = json.getInt("trackingPatience");
+		TrackingOptions res = new TrackingOptions(margin, patience);
+		return res;
+	}
+
+	private EventConflation decodeEventConflation(int val)
+	{
+		switch (val)
+		{
+			case 0:
+				return EventConflation.None;
+			case 1:
+				return EventConflation.First;
+			case 2:
+				return EventConflation.Changes;
+			case 3:
+				return EventConflation.All;
+			default:
+				return EventConflation.All;
+		}
+	}
+
+	private StillSequenceCamera2Options.Facing decodeFacing(int val) throws JSONException
+	{
+		switch (val)
+		{
+			case 0:
+				return StillSequenceCamera2Options.Facing.Back;
+			case 1:
+				return StillSequenceCamera2Options.Facing.Front;
+			case 2:
+				return StillSequenceCamera2Options.Facing.External;
+			default:
+				return StillSequenceCamera2Options.Facing.Back;
+		}
+	}
+
+	private CallBackOptions convertCallBackOptions(JSONObject json) throws JSONException
+	{
+		boolean includeImage = json.getBoolean("includeImage");
+        EventConflation conflateHits = decodeEventConflation(json.getInt("conflateHits"));
+        EventConflation conflateBlanks = decodeEventConflation(json.getInt("conflateBlanks"));
+        EventConflation conflateErrors = decodeEventConflation(json.getInt("conflateErrors"));
+        int debounceBlanks = json.getInt("debounceBlanks");
+        int debounceErrors = json.getInt("debounceErrors");
+
+		CallBackOptions res = new CallBackOptions(includeImage, conflateHits, debounceBlanks, conflateBlanks, debounceErrors, conflateErrors);
+		return res;
+	}
 
 	/**
 	 * Overridden execute method
@@ -111,13 +188,24 @@ public class FastBarcodeScannerPlugin
 			hidePreview(callbackContext);
 			return true;
 		}
-		// stop scanning
+		// stop scanning 
 		else if (ACTION_STOP_SCANNING.equals(action)) {
         	stopScanning(callbackContext);
 			return true;
 		}
+        else if (ACTION_SIMULATE.equals(action)) {
+            String barcode = arg_object.getString("barcode");
+			simulate(barcode);
+            return true;
+        }
 		// the action doesn't exist
 		return false;
+	}
+
+	private void simulate(final String barcode)
+	{
+	    IBarcodeScanner.BarcodeInfo bc = new IBarcodeScanner.BarcodeInfo(barcode, null);
+        OnHit(bc, null);
 	}
 
     private void showToast(final String text)

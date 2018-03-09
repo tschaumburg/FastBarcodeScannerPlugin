@@ -2,6 +2,12 @@
     "name": "cordova-plugin-fast-barcode-scanner",
     "version": "2.0.0.alpha5",
     "description": "Cordova Plugin for fast, continuous scanning of barcodes",
+    "main": "www/index.js",
+    "types": "types/index",
+    "files": [
+        "www",
+        "types"
+    ],
     "cordova": {
         "id": "cordova-plugin-fast-barcode-scanner",
         "platforms": [

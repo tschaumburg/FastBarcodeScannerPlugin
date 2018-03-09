@@ -1,43 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin 
+<plugin
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-fast-barcode-scanner"
-    version="2.0.0.alpha5"
+    version="2.0.2"
 >
-    <name>Fast Barcode Scanner</name>
-    <description>Cordova Plugin for fast, continuous scanning of barcodes.</description>
-    <license>Apache 2.0</license>
-    <keywords>cordova,barcodes,android</keywords>
-    <repo>https://github.com/tschaumburg/FastBarcodeScannerPlugin.git</repo>
-    <issue>https://github.com/tschaumburg/FastBarcodeScannerPlugin/issues</issue>
+  <name>FastBarcodeScanner</name>
+  <description>Cordova Plugin for fast, continuous scanning of barcodes.</description>
+  <license>Apache 2.0</license>
+  <keywords>cordova,barcodes,android</keywords>
+  <repo>https://github.com/tschaumburg/FastBarcodeScannerPlugin.git</repo>
+  <issue>https://github.com/tschaumburg/FastBarcodeScannerPlugin/issues</issue>
 
-    <js-module src="www/fastbarcodescanner.js" name="fastbarcodescanner">
-        <clobbers target="fastbarcodescanner" />
-    </js-module>
+  <js-module src="www/scanner.js" name="fastbarcodescanner">
+    <merges target="navigator" />
+  </js-module>
+ 
+  <engines>
+    <engine name="cordova" version=">=5.0.0"/>
+    <engine name="cordova-android" version=">=5.0.0"/>
+  </engines>
 
-    <engines>
-      <engine name="cordova" version=">=5.0.0"/>
-      <engine name="cordova-android" version=">=5.0.0"/>
-    </engines>
-  
-    <!-- android -->
-    <platform name="android">
-        <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="FastBarcodeScannerPlugin" >
-                <param name="android-package" value="dk.schaumburgit.fastbarcodescanner.plugin.FastBarcodeScannerPlugin"/>
-            </feature>
-        </config-file>
-	      <config-file target="AndroidManifest.xml" parent="/manifest">
-    	      <uses-permission android:name="android.permission.VIBRATE"/>
-		        <uses-permission android:name="android.permission.CAMERA"/>
-	      </config-file>
-        <source-file src="src/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
-        <framework src="com.google.zxing:core:3.2.1"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha5"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha5"/>
-        <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:2.0.0.alpha5"/>
-    </platform>
+  <!-- android -->
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="FastBarcodeScannerPlugin" >
+        <param name="android-package" value="dk.schaumburgit.fastbarcodescanner.plugin.FastBarcodeScannerPlugin"/>
+      </feature>
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.VIBRATE"/>
+      <uses-permission android:name="android.permission.CAMERA"/>
+    </config-file>
+    <source-file src="src/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
+    <framework src="com.google.zxing:core:3.2.1"/>
+    <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha5"/>
+    <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha5"/>
+    <framework src="dk.schaumburgit.fast-barcode-scanner:fast-barcode-scanner:2.0.0.alpha5"/>
+  </platform>
+
+  <!-- browser -->
+  <platform name="browser">
+    <!--<js-module src="src/browser/dummy.js" name="Vibration">
+      <merges target="navigator.notification" />
+      <merges target="navigator" />
+    </js-module>-->
+  </platform>
 
 </plugin>
