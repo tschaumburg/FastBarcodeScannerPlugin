@@ -8,3 +8,5 @@
 /www
 /**/.vs/**/*
 /dist
+/src/helpers
+/src/plugin/ioptions.js
