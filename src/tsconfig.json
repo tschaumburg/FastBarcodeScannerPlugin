@@ -1,0 +1,20 @@
+{
+    "include": [ "./plugin", "./helpers" ],
+
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false,
+        "sourceMap": true,
+        "target": "es3",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "inlineSources": false,
+        "declaration": true,
+        "sourceRoot": ".",
+        "rootDir": ".",
+        "outDir": "../dist",
+        "declarationDir": "../types",
+        "baseUrl": "."
+    }
+}

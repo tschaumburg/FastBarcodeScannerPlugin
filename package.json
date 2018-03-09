@@ -1,11 +1,11 @@
 {
     "name": "cordova-plugin-fast-barcode-scanner",
-    "version": "2.0.0.alpha5",
+    "version": "2.0.0-alpha5",
     "description": "Cordova Plugin for fast, continuous scanning of barcodes",
-    "main": "www/index.js",
+    "main": "dist/helpers/index.js",
     "types": "types/index",
     "files": [
-        "www",
+        "dist",
         "types"
     ],
     "cordova": {
@@ -34,7 +34,6 @@
     },
     "homepage": "https://github.com/tschaumburg/FastBarcodeScannerPlugin#readme",
     "_id": "cordova-plugin-fast-barcode-scanner@2.0.0.alpha5",
-    "_from": "cordova-plugin-device@*",
     "scripts": {},
     "_npmVersion": "3.3.12",
     "_nodeVersion": "5.0.0",
@@ -48,5 +47,8 @@
             "email": "thomas@schaumburg-it.dk"
         }
     ],
-    "directories": {}
+    "directories": {},
+    "devDependencies": {
+        "@types/node": "^9.4.7"
+    }
 }

@@ -13,7 +13,7 @@
   <repo>https://github.com/tschaumburg/FastBarcodeScannerPlugin.git</repo>
   <issue>https://github.com/tschaumburg/FastBarcodeScannerPlugin/issues</issue>
 
-  <js-module src="www/scanner.js" name="fastbarcodescanner">
+  <js-module src="dist/plugin/scanner.js" name="fastbarcodescanner">
     <merges target="navigator" />
   </js-module>
  
@@ -33,7 +33,7 @@
       <uses-permission android:name="android.permission.VIBRATE"/>
       <uses-permission android:name="android.permission.CAMERA"/>
     </config-file>
-    <source-file src="src/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
+    <source-file src="src/plugin/android/dk/schaumburgit/fastbarcodescanner/plugin/FastBarcodeScannerPlugin.java" target-dir="src/dk/schaumburgit/fastbarcodescanner/plugin/" />
     <framework src="com.google.zxing:core:3.2.1"/>
     <framework src="dk.schaumburgit.fast-barcode-scanner:still-sequence-camera:2.0.0.alpha5"/>
     <framework src="dk.schaumburgit.fast-barcode-scanner:tracking-barcode-scanner:2.0.0.alpha5"/>
